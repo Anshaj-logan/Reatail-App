@@ -16,11 +16,11 @@ class gedit extends StatefulWidget {
 }
 
 class _geditState extends State<gedit> {
-  bool _isLoading= false;
-  String name= "";
-  String email= "";
-  String phonenumber= "";
-  String username= "";
+  bool _isLoading = false;
+  String name = "";
+  String email = "";
+  String phonenumber = "";
+  String username = "";
   bool passwordVisible = false;
   late SharedPreferences localStorage;
   late String _id;
@@ -36,10 +36,11 @@ class _geditState extends State<gedit> {
     passwordVisible = true;
     _viewUser();
   }
-  Future<void> _viewUser() async{
+
+  Future<void> _viewUser() async {
     _id = widget.login_id;
     print('Log id ${_id}');
-    var res = await Api().getData('/api/godown/view_godown/' +_id);
+    var res = await Api().getData('/api/godown/view_godown/' + _id);
     var body = json.decode(res.body);
     print('body of datas${body}');
     setState(() {
@@ -52,9 +53,9 @@ class _geditState extends State<gedit> {
       emailController.text = email;
       phonenumberController.text = phonenumber;
       usernameController.text = username;
-
     });
   }
+
   _update() async {
     setState(() {
       var _isLoading = true;
@@ -67,33 +68,43 @@ class _geditState extends State<gedit> {
       "email": emailController.text,
       "phonenumber": phonenumberController.text,
       "username": usernameController.text,
-
     };
     print(data);
     var res =
-    await Api().authData(data, '/api/godown/update_godown_profile/' + _id);
+        await Api().authData(data, '/api/godown/update_godown_profile/' + _id);
     var body = json.decode(res.body);
     print(res);
 
     if (body['success'] == true) {
       print(body);
 
-      Fluttertoast.showToast(msg: body['message'].toString(),
+      Fluttertoast.showToast(
+        msg: body['message'].toString(),
+        backgroundColor: Colors.grey,
+      );
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => gaccount()));
+    } else {
+      Fluttertoast.showToast(
+        msg: body['message'].toString(),
         backgroundColor: Colors.grey,
       );
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        appBar: AppBar(backgroundColor: Colors.teal,
+        appBar: AppBar(
+          backgroundColor: Colors.teal,
           title: Text('Edit Profile'),
           leading: IconButton(
-              onPressed: () { Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const gaccount(),
-                  ));
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const gaccount(),
+                ));
               },
               icon: Icon(Icons.arrow_back)),
         ),
@@ -108,23 +119,23 @@ class _geditState extends State<gedit> {
                   const SizedBox(
                     height: 40,
                   ),
-                  buildTextField("name",name, nameController),
+                  buildTextField("name", name, nameController),
                   SizedBox(
                     height: 10,
                   ),
-                  buildTextField("email",email, emailController),
+                  buildTextField("email", email, emailController),
                   SizedBox(
                     height: 10,
                   ),
-                  buildTextField("phonenumber",phonenumber, phonenumberController),
+                  buildTextField(
+                      "phonenumber", phonenumber, phonenumberController),
                   SizedBox(
                     height: 10,
                   ),
-                  buildTextField("username",username, usernameController),
+                  buildTextField("username", username, usernameController),
                   SizedBox(
                     height: 30,
                   ),
-
 
                   // ElevatedButton(onPressed: () {}, child: Text('Save' ,style: TextStyle(fontSize: 15,color: Colors.black),))
                   Row(
@@ -138,17 +149,20 @@ class _geditState extends State<gedit> {
                                 borderRadius: BorderRadius.circular(50),
                                 color: Colors.teal),
                             height: 50,
-                            child: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.teal),
-                              onPressed: (){
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.teal),
+                              onPressed: () {
                                 setState(() {
                                   _update();
                                 });
                               },
-                              child:
-                              Text('Update', style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white),
+                              child: Text(
+                                'Update',
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
                               ),
                             ),
                           ),
@@ -164,9 +178,11 @@ class _geditState extends State<gedit> {
       ),
     );
   }
+
   Widget buildTextField(
-      String labelText, String placeholder, TextEditingController controller){
-    return Padding(padding: const EdgeInsets.symmetric(horizontal: 30.0),
+      String labelText, String placeholder, TextEditingController controller) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 30.0),
       child: TextFormField(
         controller: controller,
         decoration: InputDecoration(
@@ -177,5 +193,4 @@ class _geditState extends State<gedit> {
       ),
     );
   }
-
 }

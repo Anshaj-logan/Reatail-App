@@ -16,11 +16,11 @@ class edit extends StatefulWidget {
 }
 
 class _editState extends State<edit> {
-  bool _isLoading= false;
-  String name= "";
-  String email= "";
-  String phonenumber= "";
-  String username= "";
+  bool _isLoading = false;
+  String name = "";
+  String email = "";
+  String phonenumber = "";
+  String username = "";
   bool passwordVisible = false;
   late SharedPreferences localStorage;
   late String _id;
@@ -28,7 +28,7 @@ class _editState extends State<edit> {
   TextEditingController emailController = TextEditingController();
   TextEditingController phonenumberController = TextEditingController();
   TextEditingController usernameController = TextEditingController();
-final _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   @override
   initState() {
     // TODO implement initState
@@ -36,10 +36,11 @@ final _formKey = GlobalKey<FormState>();
     passwordVisible = true;
     _viewUser();
   }
-  Future<void> _viewUser() async{
+
+  Future<void> _viewUser() async {
     _id = widget.login_id;
     print('Log id ${_id}');
-    var res = await Api().getData('/api/register/view_user/' +_id);
+    var res = await Api().getData('/api/register/view_user/' + _id);
     var body = json.decode(res.body);
     print('body of datas${body}');
     setState(() {
@@ -52,9 +53,9 @@ final _formKey = GlobalKey<FormState>();
       emailController.text = email;
       phonenumberController.text = phonenumber;
       usernameController.text = username;
-
     });
   }
+
   _update() async {
     setState(() {
       var _isLoading = true;
@@ -67,34 +68,44 @@ final _formKey = GlobalKey<FormState>();
       "email": emailController.text,
       "phonenumber": phonenumberController.text,
       "username": usernameController.text,
-
     };
     print(data);
     var res =
-    await Api().authData(data, '/api/register/update_user_profile/' + _id);
+        await Api().authData(data, '/api/register/update_user_profile/' + _id);
     var body = json.decode(res.body);
     print(res);
 
     if (body['success'] == true) {
       print(body);
 
-      Fluttertoast.showToast(msg: body['message'].toString(),
+      Fluttertoast.showToast(
+        msg: body['message'].toString(),
+        backgroundColor: Colors.grey,
+      );
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => account()));
+    } else {
+      Fluttertoast.showToast(
+        msg: body['message'].toString(),
         backgroundColor: Colors.grey,
       );
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        appBar: AppBar(backgroundColor: Colors.red,
+        appBar: AppBar(
+          backgroundColor: Colors.red,
           title: Text('Edit Profile'),
           leading: IconButton(
-              onPressed: () { Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => const account(),
-          ));
-          },
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const account(),
+                ));
+              },
               icon: Icon(Icons.arrow_back)),
         ),
         body: SingleChildScrollView(
@@ -108,23 +119,23 @@ final _formKey = GlobalKey<FormState>();
                   const SizedBox(
                     height: 40,
                   ),
-                  buildTextField("name",name, nameController),
+                  buildTextField("name", name, nameController),
                   SizedBox(
                     height: 10,
                   ),
-                  buildTextField("email",email, emailController),
+                  buildTextField("email", email, emailController),
                   SizedBox(
                     height: 10,
                   ),
-                  buildTextField("phonenumber",phonenumber, phonenumberController),
+                  buildTextField(
+                      "phonenumber", phonenumber, phonenumberController),
                   SizedBox(
                     height: 10,
                   ),
-                  buildTextField("username",username, usernameController),
+                  buildTextField("username", username, usernameController),
                   SizedBox(
                     height: 30,
                   ),
-
 
                   // ElevatedButton(onPressed: () {}, child: Text('Save' ,style: TextStyle(fontSize: 15,color: Colors.black),))
                   Row(
@@ -135,20 +146,23 @@ final _formKey = GlobalKey<FormState>();
                           padding: const EdgeInsets.symmetric(horizontal: 30.0),
                           child: Container(
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(50),
-                              color: Colors.lightBlueAccent),
+                                borderRadius: BorderRadius.circular(50),
+                                color: Colors.lightBlueAccent),
                             height: 50,
-                            child: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                              onPressed: (){
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red),
+                              onPressed: () {
                                 setState(() {
                                   _update();
                                 });
                               },
-                              child:
-                              Text('Update', style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white),
+                              child: Text(
+                                'Update',
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
                               ),
                             ),
                           ),
@@ -164,18 +178,19 @@ final _formKey = GlobalKey<FormState>();
       ),
     );
   }
+
   Widget buildTextField(
-      String labelText, String placeholder, TextEditingController controller){
-    return Padding(padding: const EdgeInsets.symmetric(horizontal: 30.0),
-    child: TextFormField(
-      controller: controller,
-      decoration: InputDecoration(
-        labelText: labelText,
-        floatingLabelBehavior: FloatingLabelBehavior.always,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+      String labelText, String placeholder, TextEditingController controller) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 30.0),
+      child: TextFormField(
+        controller: controller,
+        decoration: InputDecoration(
+          labelText: labelText,
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+        ),
       ),
-    ),
     );
   }
-
 }
