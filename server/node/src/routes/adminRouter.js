@@ -7,6 +7,8 @@ const product = require('../models/product')
 const adminRouter = express.Router()
 const multer = require('multer')
 const productlist = require('../models/productlist')
+const qr = require('qr-image');
+const fs = require('fs');
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, './public/images/')
@@ -31,7 +33,18 @@ var products = {
 }
 var productDetails = await product(products).save()
 if (productDetails) {
-    return res.redirect('/admin/add-product')
+    const qrCode = qr.image(JSON.stringify(productDetails), { type: 'png' });
+    const qrCodeFilePath = `public/qrcodes/${productDetails._id}.png`;
+      const qrCodeFile = fs.createWriteStream(qrCodeFilePath);
+      qrCode.pipe(qrCodeFile);
+
+      qrCodeFile.on('finish', () => {
+        console.log('QR code generated and saved');
+
+        // Send the response with the QR code file path
+        return res.redirect('/admin/add-product')
+      });
+   
 }
 }
 )
