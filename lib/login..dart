@@ -30,24 +30,21 @@ class _LoginState extends State<Login> {
   bool _obscureText = true;
   bool passwordVisible = false;
 
+  final us = TextEditingController();
+  final pwd = TextEditingController();
 
-  final us=TextEditingController();
-  final pwd=TextEditingController();
-
-
-  _pressloginButton()async {
+  _pressloginButton() async {
     setState(() {
       _isloading = true;
     });
     var data = {
       "username": us.text.trim(),
       "password": pwd.text.trim(),
-
     };
     print(data);
     var res = await Api().authData(data, '/api/login/');
     var body = json.decode(res.body);
-   print(body);
+
     if (body['success'] == true) {
       print(body);
       role = json.encode(body['role']);
@@ -55,54 +52,70 @@ class _LoginState extends State<Login> {
       print('user ${user}');
       print('role ${role}');
       print('status ${status}');
-      if (user == role.replaceAll('"', '')&&
-      storedValue == status.replaceAll('"', '')) {
+      if (user == role.replaceAll('"', '') &&
+          storedValue == status.replaceAll('"', '')) {
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => home()));
+      } else if (counter == role.replaceAll('"', '') &&
+          storedValue == status.replaceAll('"', '')) {
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => counterhome(),
+        ));
+      } else if (godown == role.replaceAll('"', '') &&
+          storedValue == status.replaceAll('"', '')) {
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => godown1(),
+        ));
+      } else {
+        Fluttertoast.showToast(
+          msg: body['message'].toString(),
+          backgroundColor: Colors.grey,
+        );
       }
-        else if (counter == role.replaceAll('"', '')&&
-            storedValue == status.replaceAll('"', '')){
-          Navigator.of(context).push(MaterialPageRoute(builder:  (context)=> counterhome(),));
-      }
-      else if (godown == role.replaceAll('"', '')&&
-          storedValue == status.replaceAll('"', '')){
-        Navigator.of(context).push(MaterialPageRoute(builder:  (context)=> godown1(),));
-      }
-      else{
-        Fluttertoast.showToast(msg: body['message'].toString(),
-        backgroundColor: Colors.grey,);
-      }
-      localstorage= await SharedPreferences.getInstance();
+      localstorage = await SharedPreferences.getInstance();
       localstorage.setString('role', role.toString());
-      localstorage.setString('login_id', json.encode(body['login_id']).toString());
-      localstorage.setString('counter_id', json.encode(body['counter_id']).toString());
-      String login_id=(localstorage.getString('login_id')??'');
-      String counter_id=(localstorage.getString('counter_id')??'');
-      print(login_id);
-      print(counter_id);
-    }
-    else{
-      Fluttertoast.showToast(msg: body['message'].toString(),
-      backgroundColor: Colors.grey,
+      localstorage.setString(
+          'login_id', json.encode(body['login_id']).toString());
+      localstorage.setString(
+          'counter_id', json.encode(body['counter_id']).toString());
+      localstorage.setString(
+          'godown_id', json.encode(body['godown_id']).toString());
+      localstorage.setString(
+          'user_id', json.encode(body['user_id']).toString());
+      String login_id = (localstorage.getString('login_id') ?? '');
+      String counter_id = (localstorage.getString('counter_id') ?? '');
+      String user_id = (localstorage.getString('user_id') ?? '');
+      String godown_id = (localstorage.getString('godown_id') ?? '');
+      print('login_id${login_id}');
+      print('User_id${user_id}');
+      print('counter_id${counter_id}');
+      print('godown_id${godown_id}');
+    } else {
+      Fluttertoast.showToast(
+        msg: body['message'].toString(),
+        backgroundColor: Colors.grey,
       );
     }
-    String _password="";
+    String _password = "";
     @override
-    void dispose(){
+    void dispose() {
       us.dispose();
       pwd.dispose();
       super.dispose();
     }
-    void _toggle(){
+
+    void _toggle() {
       setState(() {
         _obscureText = !_obscureText;
       });
     }
+
     void initState() {
       super.initState();
       passwordVisible = true;
     }
   }
+
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -112,7 +125,6 @@ class _LoginState extends State<Login> {
       home: SafeArea(
         child: Scaffold(
           body: SingleChildScrollView(
-
             child: Form(
               key: _formKey,
               child: Column(
@@ -123,7 +135,8 @@ class _LoginState extends State<Login> {
                     padding: EdgeInsets.all(50.0),
                     child: Text(
                       'LOGIN',
-                      style: TextStyle(fontSize: 25, fontWeight: FontWeight.w900),
+                      style:
+                          TextStyle(fontSize: 25, fontWeight: FontWeight.w900),
                     ),
                   )),
                   Padding(
@@ -171,12 +184,12 @@ class _LoginState extends State<Login> {
                       textInputAction: TextInputAction.done,
                     ),
                   ),
-
-
                   ElevatedButton(
-                    onPressed: () {_pressloginButton();},
-                    child:
-                        const Text('Login', style: TextStyle(color: Colors.black)),
+                    onPressed: () {
+                      _pressloginButton();
+                    },
+                    child: const Text('Login',
+                        style: TextStyle(color: Colors.black)),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -190,8 +203,9 @@ class _LoginState extends State<Login> {
                   ),
                   TextButton(
                     onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>register()));
-                      },
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => register()));
+                    },
                     child: const Text('Sign Up'),
                   )
                 ],

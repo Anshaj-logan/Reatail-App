@@ -44,7 +44,7 @@ loginRouter.post('/', async (req, res) => {
                 status:oldUser.status,
                 login_id:oldUser._id,
                 message: "Login Successfully",
-                register_id:userDetails._id
+                user_id:userDetails._id
             })
         }
         }
@@ -59,7 +59,8 @@ loginRouter.post('/', async (req, res) => {
 }
     else if(oldUser.role === '2'){
      if (oldUser.status == "1"){
-     const counterDetails = counter.findOne({ login_id: oldUser._id})
+     const counterDetails =await counter.findOne({ login_id: oldUser._id})
+     console.log("khjhdhgfhfhfhfhfh",counterDetails);
      if(counterDetails){
         res.status(200).json({
             success: true,
@@ -68,7 +69,8 @@ loginRouter.post('/', async (req, res) => {
             role:oldUser.role,
             status:oldUser.status,
             login_id:oldUser._id,
-            name: counterDetails.name,
+            // name: counterDetails.name,
+            counter_id:counterDetails._id,
         })
      }
        
@@ -84,7 +86,7 @@ else {
     }   
     else if (oldUser.role === '3'){
         if (oldUser.status === "1"){
-        const godownDetails = godown.findOne({ login_id: oldUser._id})
+        const godownDetails = await godown.findOne({ login_id: oldUser._id})
         if(godownDetails){
            res.status(200).json({
                success: true,

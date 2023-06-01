@@ -3,11 +3,15 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test1/user/Retail2.dart';
 import 'package:test1/user/Retail3.dart';
 import 'package:test1/user/home.dart';
 
 import 'package:flutter/services.dart';
+
+import '../api.dart';
 
 class Retail1 extends StatelessWidget {
   const Retail1({Key? key}) : super(key: key);
@@ -31,10 +35,15 @@ class BarcodeScannerDemo extends StatefulWidget {
 }
 
 class _BarcodeScannerDemoState extends State<BarcodeScannerDemo> {
+  late SharedPreferences localstorage;
+  late String user_id;
+  bool _isLoading = false;
   String? _scanBarcode;
   late String pd;
+  late String qty;
   late String product_id;
   String productName = "";
+  String quantity = "";
   String price = "";
   String id = "";
   var jsonMap;
@@ -68,7 +77,7 @@ class _BarcodeScannerDemoState extends State<BarcodeScannerDemo> {
     productName = jsonMap['productname'];
     price = jsonMap['price'];
     String description = jsonMap['description'];
-    String quantity = jsonMap['quantity'];
+    quantity = jsonMap['quantity'];
     id = jsonMap['_id'];
     // int version = jsonMap['_v'];
     print('********************');
@@ -79,6 +88,39 @@ class _BarcodeScannerDemoState extends State<BarcodeScannerDemo> {
 
     print(imageBytes);
     print('********************');
+  }
+
+  Future AddCart() async {
+    localstorage = await SharedPreferences.getInstance();
+    user_id = (localstorage.getString('user_id') ?? '');
+    print('User ID ${user_id}');
+    setState(() {
+      _isLoading = true;
+    });
+
+    var data = {
+      "user": user_id.replaceAll('"', ''),
+      "product_id": id,
+      "quantity": quantity,
+    };
+    print(data);
+    var res = await Api().authData(data, '');
+    var body = json.decode(res.body);
+
+    if (body['success'] == true) {
+      //   print(body);
+      Fluttertoast.showToast(
+        msg: body['message'].toString(),
+        backgroundColor: Colors.grey,
+      );
+
+      //   Navigator.push(context as BuildContext, MaterialPageRoute(builder: (context)=>View_Comp()));
+    } else {
+      Fluttertoast.showToast(
+        msg: body['message'].toString(),
+        backgroundColor: Colors.grey,
+      );
+    }
   }
 
   @override
@@ -171,8 +213,12 @@ class _BarcodeScannerDemoState extends State<BarcodeScannerDemo> {
                         onPressed: () async {
                           pd = productName;
                           product_id = id;
+                          qty = quantity;
+
                           print('product id :${product_id}');
                           print('product name :${pd}');
+                          print('product Quantity :${qty}');
+                          AddCart();
                           // Navigator.push(context,
                           // MaterialPageRoute(builder: (context) => Retail3()));
                         },
