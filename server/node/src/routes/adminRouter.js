@@ -37,10 +37,8 @@ if (productDetails) {
     const qrCodeFilePath = `public/qrcodes/${productDetails._id}.png`;
       const qrCodeFile = fs.createWriteStream(qrCodeFilePath);
       qrCode.pipe(qrCodeFile);
-
       qrCodeFile.on('finish', () => {
         console.log('QR code generated and saved');
-
         // Send the response with the QR code file path
         return res.redirect('/admin/add-product')
       });
