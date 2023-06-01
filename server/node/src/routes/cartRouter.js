@@ -72,7 +72,7 @@ cartRouter.get('/view_cart/:id', async (req, res) => {
     }
 })
 
-productRouter.get('/increment/:id', async (req, res) => {
+cartRouter.get('/increment/:id', async (req, res) => {
     try {
         const id = req.params.id
         const old = await cart.findOne({ _id: id })
@@ -102,7 +102,7 @@ productRouter.get('/increment/:id', async (req, res) => {
     }
 })
 
-productRouter.get('/decrement/:id', async (req, res) => {
+cartRouter.get('/decrement/:id', async (req, res) => {
     try {
         const id = req.params.id
         const old = await cart.findOne({ _id: id })
