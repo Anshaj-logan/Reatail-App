@@ -6,7 +6,7 @@ const productSchema = new schema({
     productlist_id:{type:mongoose.Types.ObjectId,ref:"productlist_tb"},
     productname:{type:String},
     description:{type:String},
-    quantity:{type:String},
+    quantity:{type:Number},
     photo:{type:String},
     price:{type:String},
     offerdetails:{type:String},
