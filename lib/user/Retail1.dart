@@ -12,6 +12,7 @@ import 'package:test1/user/home.dart';
 import 'package:flutter/services.dart';
 
 import '../api.dart';
+import 'cart.dart';
 
 class Retail1 extends StatelessWidget {
   const Retail1({Key? key}) : super(key: key);
@@ -99,12 +100,12 @@ class _BarcodeScannerDemoState extends State<BarcodeScannerDemo> {
     });
 
     var data = {
-      "user": user_id.replaceAll('"', ''),
+      "user_id": user_id.replaceAll('"', ''),
       "product_id": id,
       "quantity": quantity,
     };
     print(data);
-    var res = await Api().authData(data, '');
+    var res = await Api().authData(data, '/api/cart/add');
     var body = json.decode(res.body);
 
     if (body['success'] == true) {
@@ -137,8 +138,8 @@ class _BarcodeScannerDemoState extends State<BarcodeScannerDemo> {
             Stack(
               children: [
                 IconButton(
-                  onPressed: () => Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Retail2())),
+                  onPressed: () => Navigator.push(
+                      context, MaterialPageRoute(builder: (context) => Cart())),
                   icon: const Icon(
                     Icons.shopping_cart_rounded,
                     size: 30,

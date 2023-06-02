@@ -21,6 +21,7 @@ cartRouter.post('/add', async (req, res) => {
             quantity: 1,
             status: 0
         }
+        console.log(loginDetails);
         var result = await cart(loginDetails).save()
 
 
