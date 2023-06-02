@@ -9,7 +9,7 @@ const cartRouter = express.Router()
 
 cartRouter.post('/add', async (req, res) => {
     try {
-        const old = await cart.findOne({ user_id: req.body.user_id, product_id: req.body.product_id, status: 0, date: null })
+        const old = await cart.findOne({ user_id: req.body.user_id, product_id: req.body.product_id, status: 0 })
         if (old) {
             return res.status(400).json({
                 success: false,
