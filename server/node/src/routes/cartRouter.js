@@ -346,4 +346,208 @@ cartRouter.get('/view_purchased_products/:id', async (req, res) => {
     }
 })
 
+cartRouter.get('/order_status/', async (req, res) => {
+    try {
+        const id = req.params.id
+        // const data = await cart.find({ user_id: id, status: 0 })
+        const data = await cart.aggregate([
+            {
+                '$lookup': {
+                    'from': 'product_tbs',
+                    'localField': 'product_id',
+                    'foreignField': '_id',
+                    'as': 'product'
+                }
+            },
+            {
+                '$lookup': {
+                    'from': 'registration_tbs',
+                    'localField': 'user_id',
+                    'foreignField': '_id',
+                    'as': 'user'
+                }
+            },
+            {
+                "$unwind": "$user"
+            },
+            {
+                "$unwind": "$product"
+            },
+            {
+                "$match": {
+                    "status": "1"
+                }
+            },
+            {
+                "$group": {
+                    '_id': '$_id',
+                    'quantity': { '$first': '$quantity' },
+                    'status': { '$first': '$status' },
+                    'date': { '$first': '$date' },
+                    'productname': { '$first': '$product.productname' },
+                    'description': { '$first': '$product.description' },
+                    'photo': { '$first': '$product.photo' },
+                    'price': { '$first': '$product.price' },
+                    'name': { '$first': '$user.name' },
+                    'phonenumber': { '$first': '$user.phonenumber' },
+                    'email': { '$first': '$user.email' },
+
+                }
+            }
+        ])
+
+        data.forEach((item) => {
+            item.total = item.price * item.quantity;
+        });
+
+        let totalValue = 0;
+
+        for (const item of data) {
+            totalValue += item.total;
+        }
+
+        data.forEach((item) => {
+            item.total_amount = totalValue;
+        });
+
+        if (data[0] === undefined) {
+            return res.status(401).json({
+                success: false,
+                error: true,
+                message: "No Data Found!"
+            })
+        }
+        else {
+            return res.status(200).json({
+                success: true,
+                error: false,
+                data: data,
+
+            })
+        }
+
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            error: true,
+            message: "Something went wrong"
+        })
+    }
+})
+
+cartRouter.get('/delivery_status/', async (req, res) => {
+    try {
+        const id = req.params.id
+        // const data = await cart.find({ user_id: id, status: 0 })
+        const data = await cart.aggregate([
+            {
+                '$lookup': {
+                    'from': 'product_tbs',
+                    'localField': 'product_id',
+                    'foreignField': '_id',
+                    'as': 'product'
+                }
+            },
+            {
+                '$lookup': {
+                    'from': 'registration_tbs',
+                    'localField': 'user_id',
+                    'foreignField': '_id',
+                    'as': 'user'
+                }
+            },
+            {
+                "$unwind": "$user"
+            },
+            {
+                "$unwind": "$product"
+            },
+            {
+                "$match": {
+                    "status": "2"
+                }
+            },
+            {
+                "$group": {
+                    '_id': '$_id',
+                    'quantity': { '$first': '$quantity' },
+                    'status': { '$first': '$status' },
+                    'date': { '$first': '$date' },
+                    'productname': { '$first': '$product.productname' },
+                    'description': { '$first': '$product.description' },
+                    'photo': { '$first': '$product.photo' },
+                    'price': { '$first': '$product.price' },
+                    'name': { '$first': '$user.name' },
+                    'phonenumber': { '$first': '$user.phonenumber' },
+                    'email': { '$first': '$user.email' },
+
+                }
+            }
+        ])
+
+        data.forEach((item) => {
+            item.total = item.price * item.quantity;
+        });
+
+        let totalValue = 0;
+
+        for (const item of data) {
+            totalValue += item.total;
+        }
+
+        data.forEach((item) => {
+            item.total_amount = totalValue;
+        });
+
+        if (data[0] === undefined) {
+            return res.status(401).json({
+                success: false,
+                error: true,
+                message: "No Data Found!"
+            })
+        }
+        else {
+            return res.status(200).json({
+                success: true,
+                error: false,
+                data: data,
+
+            })
+        }
+
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            error: true,
+            message: "Something went wrong"
+        })
+    }
+})
+
+cartRouter.get('/update_order_status/:id', async (req, res) => {
+    try {
+      const id = req.params.id
+            await cart.updateOne(
+                { _id: id },
+                { $set: { status: 2 } }
+            );
+        
+
+
+        return res.status(201).json({
+            success: true,
+            error: false,
+            message: "status Updated!"
+        })
+
+
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            error: true,
+            message: "Something went wrong"
+        })
+    }
+})
+
 module.exports = cartRouter

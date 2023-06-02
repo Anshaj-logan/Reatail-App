@@ -28,7 +28,7 @@ var products = {
     quantity: req.body.quantity,
     photo: req.file.filename,
     price: req.body.price,
-    offerdetails: req.body.offerdetails,
+    offerdetails: null,
     
 }
 var productDetails = await product(products).save()
