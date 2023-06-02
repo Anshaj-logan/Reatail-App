@@ -267,4 +267,83 @@ cartRouter.get('/buy_now/:id', async (req, res) => {
     }
 })
 
+cartRouter.get('/view_purchased_products/:id', async (req, res) => {
+    try {
+        const id = req.params.id
+        // const data = await cart.find({ user_id: id, status: 0 })
+        const data = await cart.aggregate([
+            {
+                '$lookup': {
+                    'from': 'product_tbs',
+                    'localField': 'product_id',
+                    'foreignField': '_id',
+                    'as': 'product'
+                }
+            },
+            {
+                "$unwind": "$product"
+            },
+            {
+                "$match": {
+                    "user_id": new objectId(id)
+                }
+            },
+            {
+                "$match": {
+                    "status": "1"
+                }
+            },
+            {
+                "$group": {
+                    '_id': '$_id',
+                    'quantity': { '$first': '$quantity' },
+                    'status': { '$first': '$status' },
+                    'productname': { '$first': '$product.productname' },
+                    'description': { '$first': '$product.description' },
+                    'photo': { '$first': '$product.photo' },
+                    'price': { '$first': '$product.price' },
+
+                }
+            }
+        ])
+
+        data.forEach((item) => {
+            item.total = item.price * item.quantity;
+        });
+
+        let totalValue = 0;
+
+        for (const item of data) {
+            totalValue += item.total;
+        }
+
+        data.forEach((item) => {
+            item.total_amount = totalValue;
+        });
+
+        if (data[0] === undefined) {
+            return res.status(401).json({
+                success: false,
+                error: true,
+                message: "No Data Found!"
+            })
+        }
+        else {
+            return res.status(200).json({
+                success: true,
+                error: false,
+                data: data,
+
+            })
+        }
+
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            error: true,
+            message: "Something went wrong"
+        })
+    }
+})
+
 module.exports = cartRouter
