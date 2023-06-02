@@ -145,7 +145,7 @@ cartRouter.get('/decrement/:id', async (req, res) => {
     try {
         const id = req.params.id
         const old = await cart.findOne({ _id: id })
-        const counts = old.quantity + 1
+        const counts = old.quantity - 1
 
         const add = await cart.updateOne({ _id: id }, { $set: { quantity: counts } })
 

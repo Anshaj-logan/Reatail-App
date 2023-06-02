@@ -1,8 +1,11 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:test1/user/placeorder.dart';
 
 import '../api.dart';
 import 'Retail3.dart';
@@ -16,6 +19,7 @@ class Cart extends StatefulWidget {
 }
 
 class _CartState extends State<Cart> {
+  Uint8List? imageBytes;
   // ApiService client = ApiService();
   bool _isLoading = false;
   var product;
@@ -25,6 +29,7 @@ class _CartState extends State<Cart> {
   bool isLoading = false;
   late String cart_id;
   late int qty;
+  late String Id;
 
   @override
   void initState() {
@@ -45,6 +50,7 @@ class _CartState extends State<Cart> {
       print(items);
       setState(() {
         cart = items;
+
         /*  List productsWithCartStatusZero =
             cart.where((item) => item['cart_status'] == 0).toList();
         for (var product in productsWithCartStatusZero) {
@@ -65,8 +71,9 @@ class _CartState extends State<Cart> {
     }
   }
 
-  _deleteData(int id) async {
-    var res = await Api().getData('/api/deletecart/' + id.toString());
+  _deleteData(String id) async {
+    var res =
+        await Api().getData('/api/cart/delete_cart/' + id.replaceAll('"', ''));
     if (res.statusCode == 200) {
       setState(() {
         Navigator.pushReplacement(
@@ -87,12 +94,13 @@ class _CartState extends State<Cart> {
     }
   }
 
-  _increment() async {
+  _increment(String id) async {
     setState(() {
       var _isLoading = true;
     });
 
-    var res = await Api().getData('/api/cart_increment/' + cart_id.toString());
+    var res =
+        await Api().getData('/api/cart/increment/' + id.replaceAll('"', ''));
     var body = json.decode(res.body);
     print(body);
     if (body['success'] == true) {
@@ -102,10 +110,10 @@ class _CartState extends State<Cart> {
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => Cart()));
       });
-      Fluttertoast.showToast(
-        msg: body['message'].toString(),
-        backgroundColor: Colors.grey,
-      );
+      // Fluttertoast.showToast(
+      //   msg: body['message'].toString(),
+      //   backgroundColor: Colors.grey,
+      // );
     } else {
       Fluttertoast.showToast(
         msg: body['message'].toString(),
@@ -114,12 +122,13 @@ class _CartState extends State<Cart> {
     }
   }
 
-  _decrement() async {
+  _decrement(String id) async {
     setState(() {
       var _isLoading = true;
     });
 
-    var res = await Api().getData('/api/cart_decrement/' + cart_id.toString());
+    var res =
+        await Api().getData('/api/cart/decrement/' + id.replaceAll('"', ''));
     var body = json.decode(res.body);
     print(body);
     if (body['success'] == true) {
@@ -129,10 +138,10 @@ class _CartState extends State<Cart> {
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => Cart()));
       });
-      Fluttertoast.showToast(
-        msg: body['message'].toString(),
-        backgroundColor: Colors.grey,
-      );
+      // Fluttertoast.showToast(
+      //   msg: body['message'].toString(),
+      //   backgroundColor: Colors.grey,
+      // );
     } else {
       Fluttertoast.showToast(
         msg: body['message'].toString(),
@@ -159,8 +168,8 @@ class _CartState extends State<Cart> {
     if (body['success'] == true) {
       cart.clear();
 
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => Retail3()));
+      // Navigator.pushReplacement(
+      //     context, MaterialPageRoute(builder: (context) => Retail3()));
       print(body);
       Fluttertoast.showToast(
         msg: body['message'].toString(),
@@ -179,6 +188,7 @@ class _CartState extends State<Cart> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.red,
         title: Text('My Cart'),
         actions: [
           Padding(
@@ -199,7 +209,7 @@ class _CartState extends State<Cart> {
               itemBuilder: (context, index) {
                 product = cart[index];
                 // final firstWord = cart[index]['p_name'].split(' ').first;
-                cart_id = cart[index]['_id'];
+                // cart_id = cart[index]['_id'];
                 //  qty = int.parse(cart[index]['quantity']);
                 return Card(
                     child: Padding(
@@ -216,25 +226,25 @@ class _CartState extends State<Cart> {
                         child: Column(
                           children: [
                             Text(
-                              "₹" + cart[index]['quantity'].toString(),
+                              cart[index]['productname'].toString(),
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 15),
                             ),
-                            /*  Container(
+                            Container(
                               height: 100,
                               width: 120,
                               decoration: BoxDecoration(
                                 image: DecorationImage(
-                                  image: NetworkImage(
-                                      Api().url + cart[index]['image']),
+                                  image: AssetImage(
+                                      "server/node/public/images/${cart[index]['photo']}"),
                                   fit: BoxFit.fill,
                                 ),
                               ),
-                            ),*/
+                            ),
                             SizedBox(height: 5),
-                            // Text(
-                            //   firstWord,
-                            // ),
+                            Text(
+                              "₹-${cart[index]['price'].toString()}",
+                            ),
                             SizedBox(height: 5),
                             /* Text(
                               "₹" + cart[index]['total_price'],
@@ -250,9 +260,10 @@ class _CartState extends State<Cart> {
                             icon: Icon(
                               Icons.delete,
                             ),
-                            onPressed: () {
+                            onPressed: () async {
+                              Id = cart[index]['_id'];
                               setState(() {
-                                _deleteData(cart[index]['id']);
+                                _deleteData(Id);
                               });
                             },
                           ),
@@ -263,9 +274,10 @@ class _CartState extends State<Cart> {
                                 width: 30,
                                 height: 30,
                                 child: FloatingActionButton(
-                                  onPressed: () {
+                                  onPressed: () async {
+                                    Id = cart[index]['_id'];
                                     setState(() {
-                                      _decrement();
+                                      _decrement(Id);
                                     });
                                   },
                                   backgroundColor: Colors.grey,
@@ -276,9 +288,9 @@ class _CartState extends State<Cart> {
                               SizedBox(
                                 width: 10,
                               ),
-                              /*   Text(
-                                '${qty}'.toString(),
-                              ),*/
+                              Text(
+                                cart[index]['quantity'].toString(),
+                              ),
                               SizedBox(
                                 width: 10,
                               ),
@@ -286,9 +298,10 @@ class _CartState extends State<Cart> {
                                 width: 30,
                                 height: 30,
                                 child: FloatingActionButton(
-                                  onPressed: () {
+                                  onPressed: () async {
+                                    Id = cart[index]['_id'];
                                     setState(() {
-                                      _increment();
+                                      _increment(Id);
                                     });
                                   },
                                   backgroundColor: Colors.grey,
@@ -310,7 +323,10 @@ class _CartState extends State<Cart> {
           color: Colors.yellow,
           child: InkWell(
             onTap: () {
-              PlaceOrders();
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => PlaceOrder()));
+
+              // PlaceOrders();
             },
             child: const SizedBox(
               height: kToolbarHeight,
