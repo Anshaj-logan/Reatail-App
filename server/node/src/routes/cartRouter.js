@@ -96,6 +96,10 @@ cartRouter.get('/view_cart/:id', async (req, res) => {
             totalValue += item.total;
           }
 
+          data.forEach((item) => {
+            item.total_amount = totalValue;
+          });
+
         if (data[0] === undefined) {
             return res.status(401).json({
                 success: false,
@@ -105,7 +109,6 @@ cartRouter.get('/view_cart/:id', async (req, res) => {
         }
         else {
             return res.status(200).json({
-                total_amount:totalValue,
                 success: true,
                 error: false,
                 data: data,
@@ -157,25 +160,33 @@ cartRouter.get('/decrement/:id', async (req, res) => {
     try {
         const id = req.params.id
         const old = await cart.findOne({ _id: id })
-        const counts = old.quantity - 1
+        if(old.quantity>1){
+            const counts = old.quantity - 1
 
-        const add = await cart.updateOne({ _id: id }, { $set: { quantity: counts } })
-
-        if (add.modifiedCount === 1) {
-            const old_product = await product.findOne({ _id: old.product_id })
-            const available_counts = old_product.quantity - 1
-            const products = await product.updateOne({ _id: old.product_id }, { $set: { quantity: available_counts } })
-
-            return res.status(201).json({
-                success: true, error: false,
-                message: "updated"
-            })
+            const add = await cart.updateOne({ _id: id }, { $set: { quantity: counts } })
+    
+            if (add.modifiedCount === 1) {
+                const old_product = await product.findOne({ _id: old.product_id })
+                const available_counts = old_product.quantity - 1
+                const products = await product.updateOne({ _id: old.product_id }, { $set: { quantity: available_counts } })
+    
+                return res.status(201).json({
+                    success: true, error: false,
+                    message: "updated"
+                })
+            } else {
+                return res.status(400).json({
+                    success: false, error: true,
+                    message: "error"
+                })
+            }
         } else {
             return res.status(400).json({
                 success: false, error: true,
-                message: "error"
+                message: "Quantity cannot be less than 1"
             })
         }
+       
     }
     catch (err) {
         res.status(500).json({ success: false, error: true, message: 'Something Went Wrong' })
