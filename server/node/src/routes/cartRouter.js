@@ -1,5 +1,7 @@
 const express = require('express')
 const loginData = require('../models/loginData')
+const mongoose = require('mongoose')
+const objectId = mongoose.Types.ObjectId
 const cart = require('../models/cart')
 const product = require('../models/product')
 
@@ -47,7 +49,42 @@ cartRouter.post('/add', async (req, res) => {
 cartRouter.get('/view_cart/:id', async (req, res) => {
     try {
         const id = req.params.id
-        const data = await cart.find({ user_id: id, status: 0 })
+        // const data = await cart.find({ user_id: id, status: 0 })
+        const data = await cart.aggregate([
+            {
+                '$lookup': {
+                    'from': 'product_tbs',
+                    'localField': 'product_id',
+                    'foreignField': '_id',
+                    'as': 'product'
+                }
+            },
+            {
+                "$unwind": "$product"
+            },
+            {
+                "$match":{
+                    "user_id":new objectId(id)
+                }
+            },
+            {
+                "$match":{
+                    "status": "0"
+                }
+            },
+            {
+                "$group": {
+                    '_id': '$_id',
+                    'quantity': { '$first': '$quantity' },
+                    'status': { '$first': '$status' },
+                    'productname': { '$first': '$product.productname' },
+                    'description': { '$first': '$product.description' },
+                    'photo': { '$first': '$product.photo' },
+                    'price': { '$first': '$product.price' },
+                   
+                }
+            }
+        ])
 
         if (data[0] === undefined) {
             return res.status(401).json({
