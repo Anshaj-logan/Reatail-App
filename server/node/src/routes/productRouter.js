@@ -62,7 +62,24 @@ productRouter.post('/update_offer_details/:id',(req,res)=>{
           message: "something went wrong"  
         })
     })
- })   
+ })  
+ 
+ productRouter.get('/delete_offer_details/:id',(req,res)=>{
+    const id= req.params.id
+    console.log(id);
+    product.updateOne({_id: id},{ $set:{offerdetails:null} }).then((data)=>{
+        console.log(data);
+        res.status(200).json({
+            success: true,
+            error: false,
+            message:"Details Updated"
+        })
+    }).catch(err=>{
+        return res.status(401).json({
+          message: "something went wrong"  
+        })
+    })
+ })
  productRouter.post('/add_to_cart/:id',(req,res)=>{
     const {offerdetails}= req.body
     const id= req.params.id

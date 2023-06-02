@@ -251,9 +251,9 @@ cartRouter.get('/buy_now/:id', async (req, res) => {
         }
 
 
-        return res.status(401).json({
-            success: false,
-            error: true,
+        return res.status(201).json({
+            success: true,
+            error: false,
             message: "Order Placed!"
         })
 
