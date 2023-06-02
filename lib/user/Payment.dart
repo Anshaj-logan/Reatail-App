@@ -8,9 +8,9 @@ import '../api.dart';
 import 'home.dart';
 
 class PaymentScreen extends StatefulWidget {
-  // final String price;
-  // PaymentScreen(this.price);
-  const PaymentScreen({Key? key}) : super(key: key);
+  final String price;
+  PaymentScreen(this.price);
+  // const PaymentScreen({Key? key}) : super(key: key);
 
   @override
   State<PaymentScreen> createState() => _PaymentScreenState();
@@ -27,9 +27,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
   @override
   Widget build(BuildContext context) {
     DateTime? _selectDate;
-    late SharedPreferences prefs;
+    late SharedPreferences localstorage;
+    late String user_id;
     bool isLoading = false;
-    late int user_id, order_id;
+
     late String amount;
     Future<void> _showDialog(BuildContext context) {
       return showDialog(
@@ -59,23 +60,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
     }
 
     Future PlaceOrders() async {
-      // amount = widget.price;
+      localstorage = await SharedPreferences.getInstance();
+      user_id = (localstorage.getString('user_id') ?? '');
+      print('User ID ${user_id}');
 
-      // print(amount);
-      prefs = await SharedPreferences.getInstance();
-      user_id = (prefs.getInt('user_id') ?? 0);
-      print('login_id_complaint ${user_id}');
-      setState(() {
-        isLoading = true;
-      });
-
-      var data = {
-        "user": user_id.toString(),
-        // "amount": amount,
-        // "date": formattedDate
-      };
-      print(data);
-      var res = await Api().authData(data, '/api/payment');
+      var res = await Api()
+          .getData('/api/cart/buy_now/' + user_id.replaceAll('"', ''));
       var body = json.decode(res.body);
       print(body);
       if (body['success'] == true) {
@@ -177,8 +167,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
               TextField(
                 readOnly: true,
                 decoration: InputDecoration(
-                  // labelText: amount,
-                  // hintText: amount,
+                  labelText: widget.price,
+                  hintText: widget.price,
                   hintStyle: TextStyle(color: Colors.green),
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30)),
@@ -198,11 +188,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       // padding: EdgeInsets.all(20)
                     ),
                     onPressed: () {
-                      _showDialog(context);
+                      // _showDialog(context);
 
-                      // PlaceOrders();
+                      PlaceOrders();
                     },
-                    child: Text("CONTINUE")),
+                    child: Text("Pay")),
               ),
               SizedBox(height: 30),
             ],

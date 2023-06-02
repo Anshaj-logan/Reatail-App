@@ -30,6 +30,7 @@ class _CartState extends State<Cart> {
   late String cart_id;
   late int qty;
   late String Id;
+  late int price;
 
   @override
   void initState() {
@@ -150,38 +151,38 @@ class _CartState extends State<Cart> {
     }
   }
 
-  Future PlaceOrders() async {
-    // prefs = await SharedPreferences.getInstance();
-    // user_id = (prefs.getInt('user_id') ?? 0);
-    print('login_id_complaint ${user_id}');
-    setState(() {
-      _isLoading = true;
-    });
-
-    var data = {
-      "user": user_id.toString(),
-    };
-    print(data);
-    var res = await Api().authData(data, '/api/order');
-    var body = json.decode(res.body);
-    print(body);
-    if (body['success'] == true) {
-      cart.clear();
-
-      // Navigator.pushReplacement(
-      //     context, MaterialPageRoute(builder: (context) => Retail3()));
-      print(body);
-      Fluttertoast.showToast(
-        msg: body['message'].toString(),
-        backgroundColor: Colors.grey,
-      );
-    } else {
-      Fluttertoast.showToast(
-        msg: body['message'].toString(),
-        backgroundColor: Colors.grey,
-      );
-    }
-  }
+  // Future PlaceOrders() async {
+  //   // prefs = await SharedPreferences.getInstance();
+  //   // user_id = (prefs.getInt('user_id') ?? 0);
+  //   print('login_id_complaint ${user_id}');
+  //   setState(() {
+  //     _isLoading = true;
+  //   });
+  //
+  //   var data = {
+  //     "user": user_id.toString(),
+  //   };
+  //   print(data);
+  //   var res = await Api().authData(data, '/api/order');
+  //   var body = json.decode(res.body);
+  //   print(body);
+  //   if (body['success'] == true) {
+  //     cart.clear();
+  //
+  //     // Navigator.pushReplacement(
+  //     //     context, MaterialPageRoute(builder: (context) => Retail3()));
+  //     print(body);
+  //     Fluttertoast.showToast(
+  //       msg: body['message'].toString(),
+  //       backgroundColor: Colors.grey,
+  //     );
+  //   } else {
+  //     Fluttertoast.showToast(
+  //       msg: body['message'].toString(),
+  //       backgroundColor: Colors.grey,
+  //     );
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -322,7 +323,9 @@ class _CartState extends State<Cart> {
         child: Material(
           color: Colors.yellow,
           child: InkWell(
-            onTap: () {
+            onTap: () async {
+              price = cart[0]['total_amount'];
+              print('Total Price ${price}');
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => PlaceOrder()));
 
