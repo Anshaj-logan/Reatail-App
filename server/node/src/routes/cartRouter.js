@@ -86,6 +86,16 @@ cartRouter.get('/view_cart/:id', async (req, res) => {
             }
         ])
 
+        data.forEach((item) => {
+            item.total = item.price * item.quantity;
+          });
+
+          let totalValue = 0;
+
+          for (const item of data) {
+            totalValue += item.total;
+          }
+
         if (data[0] === undefined) {
             return res.status(401).json({
                 success: false,
@@ -95,9 +105,11 @@ cartRouter.get('/view_cart/:id', async (req, res) => {
         }
         else {
             return res.status(200).json({
+                total_amount:totalValue,
                 success: true,
                 error: false,
-                data: data
+                data: data,
+                
             })
         }
 
