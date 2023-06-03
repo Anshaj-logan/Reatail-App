@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:test1/godown/gselectuser.dart';
 
 class guser extends StatefulWidget {
-  const guser({Key? key}) : super(key: key);
+  String productid;
+  guser(this.productid);
 
   @override
   State<guser> createState() => _guserState();
@@ -19,7 +20,8 @@ class _guserState extends State<guser> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        appBar: AppBar(backgroundColor: Colors.teal,
+        appBar: AppBar(
+          backgroundColor: Colors.teal,
           title: const Text('User 1'),
           leading: IconButton(
               onPressed: () => Navigator.of(context).push(
@@ -37,23 +39,21 @@ class _guserState extends State<guser> {
                     child: Text(
                       'Select User',
                       style:
-                      TextStyle(fontSize: 25, fontWeight: FontWeight.w900),
+                          TextStyle(fontSize: 25, fontWeight: FontWeight.w900),
                     ),
                   ),
-                  ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.teal),
-                      onPressed: () {
-                      },
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.teal),
+                      onPressed: () {},
                       child: Text('Selected',
-                          style: TextStyle(
-                              fontSize: 15, color: Colors.white))
-
-                  ),
+                          style: TextStyle(fontSize: 15, color: Colors.white))),
                   const Padding(
                     padding: EdgeInsets.all(10.0),
                     child: Text(
                       'Orders',
                       style:
-                      TextStyle(fontSize: 25, fontWeight: FontWeight.w900),
+                          TextStyle(fontSize: 25, fontWeight: FontWeight.w900),
                     ),
                   ),
                   Center(
@@ -61,7 +61,8 @@ class _guserState extends State<guser> {
                       children: [
                         CheckboxListTile(
                             controlAffinity: ListTileControlAffinity.leading,
-                            title: Text("Item 1",style: TextStyle(fontWeight: FontWeight.w900)),
+                            title: Text("Item 1",
+                                style: TextStyle(fontWeight: FontWeight.w900)),
                             activeColor: Colors.red,
                             value: isChecked,
                             onChanged: (val) {
@@ -71,7 +72,8 @@ class _guserState extends State<guser> {
                             }),
                         CheckboxListTile(
                             controlAffinity: ListTileControlAffinity.leading,
-                            title: Text("Item 2",style: TextStyle(fontWeight: FontWeight.w900)),
+                            title: Text("Item 2",
+                                style: TextStyle(fontWeight: FontWeight.w900)),
                             activeColor: Colors.red,
                             value: isChecked1,
                             onChanged: (val) {
@@ -81,7 +83,8 @@ class _guserState extends State<guser> {
                             }),
                         CheckboxListTile(
                             controlAffinity: ListTileControlAffinity.leading,
-                            title: Text("Item 3,",style: TextStyle(fontWeight: FontWeight.w900)),
+                            title: Text("Item 3,",
+                                style: TextStyle(fontWeight: FontWeight.w900)),
                             activeColor: Colors.red,
                             value: isChecked2,
                             onChanged: (val) {
@@ -91,7 +94,8 @@ class _guserState extends State<guser> {
                             }),
                         CheckboxListTile(
                             controlAffinity: ListTileControlAffinity.leading,
-                            title: Text("Item 4",style: TextStyle(fontWeight: FontWeight.w900)),
+                            title: Text("Item 4",
+                                style: TextStyle(fontWeight: FontWeight.w900)),
                             activeColor: Colors.red,
                             value: isChecked3,
                             onChanged: (val) {
@@ -101,7 +105,8 @@ class _guserState extends State<guser> {
                             }),
                         CheckboxListTile(
                             controlAffinity: ListTileControlAffinity.leading,
-                            title: Text("Item 5",style: TextStyle(fontWeight: FontWeight.w900)),
+                            title: Text("Item 5",
+                                style: TextStyle(fontWeight: FontWeight.w900)),
                             activeColor: Colors.red,
                             value: isChecked4,
                             onChanged: (val) {
@@ -118,12 +123,12 @@ class _guserState extends State<guser> {
                       ],
                     ),
                   ),
-                  ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.teal),
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.teal),
                       onPressed: () {},
                       child: Text('Done',
-                          style: TextStyle(
-                              fontSize: 15, color: Colors.white))
-                  ),
+                          style: TextStyle(fontSize: 15, color: Colors.white))),
                 ],
               ),
             ],

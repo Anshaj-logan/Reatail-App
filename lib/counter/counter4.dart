@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:test1/counter/counter5.dart';
 import 'package:test1/api.dart';
 
-
 class counter4 extends StatefulWidget {
   const counter4({Key? key}) : super(key: key);
 //String index;
@@ -13,8 +12,6 @@ class counter4 extends StatefulWidget {
 }
 
 class _counter4State extends State<counter4> {
-
-
   List imagesList = [
     "images/p1.png",
     "images/p2.png",
@@ -22,7 +19,7 @@ class _counter4State extends State<counter4> {
     "images/p4.png",
     "images/p5.png",
   ];
- /* List titles = [
+  /* List titles = [
    "Item 1",
     "Item 2",
     "Item 3",
@@ -30,8 +27,8 @@ class _counter4State extends State<counter4> {
     "Item 5"
   ];*/
   List loadeddata = [];
- late String productid='';
- // late String id='';
+  late String productid = '';
+  // late String id='';
 
   _fetchData() async {
     //String id=widget.index;
@@ -39,10 +36,10 @@ class _counter4State extends State<counter4> {
 
     if (res.statusCode == 200) {
       var items = json.decode(res.body)['data'];
-print(items);
+      print(items);
       setState(() {
         loadeddata = items;
-       print(loadeddata);
+        print(loadeddata);
       });
     } else {
       setState(() {
@@ -50,12 +47,14 @@ print(items);
       });
     }
   }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _fetchData();
   }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -65,31 +64,31 @@ print(items);
           title: const Text('Add Offers'),
           backgroundColor: Colors.green,
           leading: IconButton(
-    onPressed: () => Navigator.pop(context),
-    icon: Icon(Icons.arrow_back)),
-
-    ),
-
+              onPressed: () => Navigator.pop(context),
+              icon: Icon(Icons.arrow_back)),
+        ),
         body: ListView.builder(
             shrinkWrap: true,
             itemCount: loadeddata.length,
             itemBuilder: (BuildContext context, int index) {
               return Padding(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 2.0, horizontal: 4.0),
-                child: Card(
-                  child: GestureDetector(
-                    onTap: () async{
-                      productid=loadeddata[index]['_id'];
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 2.0, horizontal: 4.0),
+                  child: Card(
+                      child: GestureDetector(
+                    onTap: () async {
+                      productid = loadeddata[index]['_id'];
                       print(productid);
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>counter5(productid: productid)));
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) =>
+                              counter5(productid: productid)));
                     },
                     child: ListTile(
-
-                        title:Text(loadeddata[index]['productname'].toString()),
-                    leading: CircleAvatar(
-                      backgroundImage: AssetImage(imagesList[index]),
-                    ),
+                      title: Text(loadeddata[index]['productname'].toString()),
+                      leading: CircleAvatar(
+                        backgroundImage: AssetImage(
+                            "server/node/public/images/${loadeddata[index]['photo']}"),
+                      ),
                     ),
                   )));
             }),

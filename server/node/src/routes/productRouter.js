@@ -55,7 +55,7 @@ productRouter.post('/update_offer_details/:id',(req,res)=>{
         res.status(200).json({
             success: true,
             error: false,
-            message:"Details Updated"
+            message:"Offer Updated"
         })
     }).catch(err=>{
         return res.status(401).json({
