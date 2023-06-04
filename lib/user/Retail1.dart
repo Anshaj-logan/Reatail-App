@@ -157,7 +157,7 @@ class _BarcodeScannerDemoState extends State<BarcodeScannerDemo> {
                     ),
                     child: const Center(
                         child: Text(
-                      "2",
+                      "1",
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,

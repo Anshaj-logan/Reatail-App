@@ -1,13 +1,17 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../api.dart';
+import 'gselectuser.dart';
 
 class ProdctView extends StatefulWidget {
   String productid;
-  ProdctView(this.productid);
+  int qty;
+  String cartid;
+  ProdctView(this.productid, this.qty, this.cartid);
 
   @override
   State<ProdctView> createState() => _ProdctViewState();
@@ -24,6 +28,31 @@ class _ProdctViewState extends State<ProdctView> {
   List loadeddata = [];
   late String productid = '';
   var items;
+
+  _delivered() async {
+    String cartid = widget.cartid;
+    var res = await Api()
+        .getData('/api/cart/update_order_status/' + cartid.replaceAll('"', ''));
+    if (res.statusCode == 200) {
+      setState(() {
+        Fluttertoast.showToast(
+          msg: res['message'].toString(),
+          backgroundColor: Colors.grey,
+        );
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => gselectuser()));
+      });
+    }
+    // else {
+    //   setState(() {
+    //     loadeddata = [];
+    //     Fluttertoast.showToast(
+    //       msg: "Currently there is no offer products",
+    //       backgroundColor: Colors.grey,
+    //     );
+    //   });
+    // }
+  }
 
   _fetchData() async {
     localstorage = await SharedPreferences.getInstance();
@@ -69,7 +98,8 @@ class _ProdctViewState extends State<ProdctView> {
             title: const Text('Details'),
             backgroundColor: Colors.green,
             leading: IconButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const gselectuser())),
                 icon: Icon(Icons.arrow_back)),
             // actions: [
             //   IconButton(
@@ -155,7 +185,7 @@ class _ProdctViewState extends State<ProdctView> {
                               ),
                               SizedBox(width: 20),
                               Text(
-                                loadeddata[position]["quantity"].toString(),
+                                widget.qty.toString(),
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
@@ -219,6 +249,20 @@ class _ProdctViewState extends State<ProdctView> {
                                 height: 10,
                               ),
                             ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 150),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red),
+                              onPressed: () async {
+                                setState(() {
+                                  _delivered();
+                                });
+                              },
+                              child: const Text('Delivered',
+                                  style: TextStyle(color: Colors.white)),
+                            ),
                           ),
                         ]),
                       ),

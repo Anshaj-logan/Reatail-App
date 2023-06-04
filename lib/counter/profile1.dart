@@ -129,10 +129,10 @@ class _profile1State extends State<profile1> {
                   ),
                   buildTextField(
                       "phonenumber", phonenumber, phonenumberController),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  buildTextField("username", username, usernameController),
+                  // SizedBox(
+                  //   height: 10,
+                  // ),
+                  // buildTextField("username", username, usernameController),
                   SizedBox(
                     height: 30,
                   ),

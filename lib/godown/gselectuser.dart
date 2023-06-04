@@ -19,6 +19,8 @@ class _gselectuserState extends State<gselectuser> {
 
   List loadeddata = [];
   late String productid = '';
+  late int qty;
+  late String cartid = '';
   // late String id='';
 
   _fetchData() async {
@@ -68,11 +70,15 @@ class _gselectuserState extends State<gselectuser> {
                 child: Card(
                   child: ListTile(
                     onTap: () async {
+                      cartid = loadeddata[index]['_id'];
                       productid = loadeddata[index]['product_id'];
+                      qty = loadeddata[index]['quantity'];
                       print('Product Id ${productid}');
+                      print('Cart Id ${cartid}');
+                      print('Quantity ${qty}');
                       Navigator.of(context).pushReplacement(MaterialPageRoute(
                           builder: (BuildContext context) =>
-                              ProdctView(productid)));
+                              ProdctView(productid, qty, cartid)));
                     },
                     title:
                         Text('User :- ${loadeddata[index]['name'].toString()}'),

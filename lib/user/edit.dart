@@ -129,10 +129,10 @@ class _editState extends State<edit> {
                   ),
                   buildTextField(
                       "phonenumber", phonenumber, phonenumberController),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  buildTextField("username", username, usernameController),
+                  // SizedBox(
+                  //   height: 10,
+                  // ),
+                  // buildTextField("username", username, usernameController),
                   SizedBox(
                     height: 30,
                   ),

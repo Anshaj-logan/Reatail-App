@@ -5,6 +5,8 @@ import 'package:test1/login..dart';
 import 'package:test1/user/offer.dart';
 import 'package:test1/user/purchased.dart';
 
+import 'cart.dart';
+
 class home extends StatefulWidget {
   const home({Key? key}) : super(key: key);
 
@@ -19,13 +21,49 @@ class _homeState extends State<home> {
         debugShowCheckedModeBanner: false,
         home: SafeArea(
           child: Scaffold(
-            floatingActionButton: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            floatingActionButton: ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                 onPressed: () => Navigator.push(
                     context, MaterialPageRoute(builder: (context) => Login())),
                 child:
-                    const Text('Exit', style:TextStyle(color: Colors.white))),
-            appBar: AppBar(backgroundColor: Colors.red,
+                    const Text('Exit', style: TextStyle(color: Colors.white))),
+            appBar: AppBar(
+              backgroundColor: Colors.red,
               title: const Text('Home Page'),
+              actions: [
+                Stack(
+                  children: [
+                    IconButton(
+                      onPressed: () => Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Cart())),
+                      icon: const Icon(
+                        Icons.shopping_cart_rounded,
+                        size: 30,
+                      ),
+                    ),
+                    Positioned(
+                      top: 4,
+                      right: 6,
+                      child: Container(
+                        height: 22,
+                        width: 22,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.black,
+                        ),
+                        child: const Center(
+                            child: Text(
+                          "1",
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
             body: Column(
               //mainAxisAlignment: MainAxisAlignment.center,
@@ -43,7 +81,8 @@ class _homeState extends State<home> {
                                 width: 2,
                               ),
                               shape: BoxShape.circle,
-                              image: DecorationImage(fit:BoxFit.cover ,
+                              image: DecorationImage(
+                                  fit: BoxFit.cover,
                                   image: AssetImage('images/uaccount.webp'))),
                           child: TextButton(
                             onPressed: () => Navigator.push(
@@ -75,7 +114,8 @@ class _homeState extends State<home> {
                                 width: 2,
                               ),
                               shape: BoxShape.circle,
-                              image: DecorationImage(fit:BoxFit.cover ,
+                              image: DecorationImage(
+                                  fit: BoxFit.cover,
                                   image: AssetImage('images/ucart.webp'))),
                           child: TextButton(
                             onPressed: () => Navigator.push(
@@ -114,7 +154,8 @@ class _homeState extends State<home> {
                                   width: 2,
                                 ),
                                 shape: BoxShape.circle,
-                                image: DecorationImage(fit:BoxFit.cover,
+                                image: DecorationImage(
+                                    fit: BoxFit.cover,
                                     image: AssetImage('images/upurchase.jpg'))),
                             child: TextButton(
                               onPressed: () => Navigator.push(
@@ -144,7 +185,8 @@ class _homeState extends State<home> {
                               width: 2,
                             ),
                             shape: BoxShape.circle,
-                            image: DecorationImage(fit:BoxFit.cover,
+                            image: DecorationImage(
+                                fit: BoxFit.cover,
                                 image: AssetImage('images/uoffer.jpg'))),
                         child: TextButton(
                           onPressed: () => Navigator.push(context,
