@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:test1/godown/godown1.dart';
 import 'package:test1/godown/guser.dart';
+import 'package:test1/godown/productview.dart';
 
 import '../api.dart';
 
@@ -67,10 +68,11 @@ class _gselectuserState extends State<gselectuser> {
                 child: Card(
                   child: ListTile(
                     onTap: () async {
-                      productid = loadeddata[index]['_id'];
-                      print(productid);
+                      productid = loadeddata[index]['product_id'];
+                      print('Product Id ${productid}');
                       Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (BuildContext context) => guser(productid)));
+                          builder: (BuildContext context) =>
+                              ProdctView(productid)));
                     },
                     title:
                         Text('User :- ${loadeddata[index]['name'].toString()}'),

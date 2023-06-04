@@ -474,6 +474,7 @@ cartRouter.get('/order_status/', async (req, res) => {
                     'status': { '$first': '$status' },
                     'date': { '$first': '$date' },
                     'productname': { '$first': '$product.productname' },
+                    'product_id': { '$first': '$product._id' },
                     'description': { '$first': '$product.description' },
                     'photo': { '$first': '$product.photo' },
                     'price': { '$first': '$product.price' },
