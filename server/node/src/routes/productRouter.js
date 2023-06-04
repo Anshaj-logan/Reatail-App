@@ -51,11 +51,12 @@ productRouter.get('/offer_product/', async(req, res) => {
     
   try {
    const pro= await product.find()
-   const data  = pro.filter((data)=>{
-    return data.offerdetails!=null
-   })
-    .then(function (data) {
-        if (data[0] == undefined) {
+   
+    
+        const datas  = pro.filter((data)=>{
+            return data.offerdetails!=null
+           })
+        if (datas[0] == undefined) {
             return res.status(401).json({
                 success: false,
                 error: true,
@@ -66,10 +67,10 @@ productRouter.get('/offer_product/', async(req, res) => {
             return res.status(200).json({
                 success: true,
                 error: false,
-                data: data
+                data: datas
             })
         }
-    })
+
   } catch (error) {
     
   }
