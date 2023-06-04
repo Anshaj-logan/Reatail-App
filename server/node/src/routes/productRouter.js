@@ -47,7 +47,7 @@ productRouter.get('/view_singleproductdetails/:id', (req, res) => {
         })
 })
 
-productRouter.get('/offer_product/', async(req, res) => {
+productRouter.get('/offer_product', async(req, res) => {
     
   try {
    const pro= await product.find()
