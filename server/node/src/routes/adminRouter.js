@@ -9,6 +9,8 @@ const multer = require('multer')
 const productlist = require('../models/productlist')
 const qr = require('qr-image');
 const fs = require('fs');
+const cart = require('../models/cart')
+const bcrypt = require('bcryptjs')
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, './public/images/')
@@ -19,6 +21,30 @@ const storage = multer.diskStorage({
   })
   
   const upload = multer({ storage: storage })
+
+  adminRouter.get('/logout',(req,res)=>{
+    res.render('login')
+  })
+
+  adminRouter.post("/admin-login", async (req, res) => {
+    const { username, password } = req.body;
+    console.log(username,password);
+    try {
+        const oldUser = await loginData.findOne({ username })
+        console.log(oldUser);
+        if (!oldUser) return res.redirect('/')
+        const isPasswordCorrect = await bcrypt.compare(password, oldUser.password)
+        if (!isPasswordCorrect) return res.redirect('/')
+        if (oldUser.role === '0') {
+                const admin = await loginData.findOne({ _id: oldUser._id })
+                if (admin) {
+                    return res.redirect('/admin')
+                }           
+        }       
+    } catch (error) {
+        return res.status(500).redirect('/')
+    }
+})  
 
 adminRouter.post('/save',upload.single('photo'),async(req,res) => {
 
@@ -259,8 +285,87 @@ adminRouter.get('/add-product', (req, res) => {
     
     
 })
-adminRouter.get('/sales-report', (req, res) => {
-    res.render("sales-report")
+adminRouter.get('/sales-report', async (req, res) => {
+
+
+
+    try {
+        const data = await cart.aggregate([
+            {
+                '$lookup': {
+                    'from': 'product_tbs',
+                    'localField': 'product_id',
+                    'foreignField': '_id',
+                    'as': 'product'
+                }
+            },
+            {
+                '$lookup': {
+                    'from': 'registration_tbs',
+                    'localField': 'user_id',
+                    'foreignField': '_id',
+                    'as': 'user'
+                }
+            },
+            {
+                "$unwind": "$user"
+            },
+            {
+                "$unwind": "$product"
+            },
+            {
+                "$match": {
+                    "status": "2"
+                }
+            },
+            {
+                "$group": {
+                    '_id': '$_id',
+                    'quantity': { '$first': '$quantity' },
+                    'status': { '$first': '$status' },
+                    'date': { '$first': '$date' },
+                    'productname': { '$first': '$product.productname' },
+                    'description': { '$first': '$product.description' },
+                    'photo': { '$first': '$product.photo' },
+                    'price': { '$first': '$product.price' },
+                    'name': { '$first': '$user.name' },
+                    'phonenumber': { '$first': '$user.phonenumber' },
+                    'email': { '$first': '$user.email' },
+
+                }
+            }
+        ])
+
+        data.forEach((item) => {
+            item.total = item.price * item.quantity;
+        });
+
+        let totalValue = 0;
+
+        for (const item of data) {
+            totalValue += item.total;
+        }
+
+        data.forEach((item) => {
+            item.total_amount = totalValue;
+        });
+
+        if (data[0] === undefined) {
+            return res.status(401).json({
+                success: false,
+                error: true,
+                message: "No Data Found!"
+            })
+        }
+        else {
+            console.log(data);
+            res.render("sales-report",{data})
+        }
+
+    } catch (error) {
+       
+    }
+   
 })
 adminRouter.get('/view-offer', (req, res) => {
     res.render("view-offer")
